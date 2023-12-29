@@ -1,3 +1,3 @@
-module github.com/fredrikln/writing-an-interpreter-in-go
+module github.com/fredrikln/monkey
 
 go 1.21.3

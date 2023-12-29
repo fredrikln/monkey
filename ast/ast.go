@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"strings"
 
-	"github.com/fredrikln/writing-an-interpreter-in-go/token"
+	"github.com/fredrikln/monkey/token"
 )
 
 type Node interface {

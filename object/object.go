@@ -6,7 +6,7 @@ import (
 	"hash/fnv"
 	"strings"
 
-	"github.com/fredrikln/writing-an-interpreter-in-go/ast"
+	"github.com/fredrikln/monkey/ast"
 )
 
 const (

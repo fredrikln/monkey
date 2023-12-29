@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/fredrikln/writing-an-interpreter-in-go/ast"
-	"github.com/fredrikln/writing-an-interpreter-in-go/lexer"
+	"github.com/fredrikln/monkey/ast"
+	"github.com/fredrikln/monkey/lexer"
 )
 
 func createTestProgram(t *testing.T, input string) *ast.Program {
