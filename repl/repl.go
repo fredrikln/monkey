@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/fredrikln/monkey/evaluator"
+	"github.com/fredrikln/monkey/compiler"
 	"github.com/fredrikln/monkey/lexer"
-	"github.com/fredrikln/monkey/object"
 	"github.com/fredrikln/monkey/parser"
+	"github.com/fredrikln/monkey/vm"
 )
 
 const PROMPT = ">> "
@@ -26,9 +26,37 @@ const MONKEY_FACE = `            __,__
            '-----'
 `
 
+// func Start(in io.Reader, out io.Writer) {
+// 	scanner := bufio.NewScanner(in)
+// 	env := object.NewEnvironment()
+
+// 	for {
+// 		fmt.Fprint(out, PROMPT)
+// 		scanned := scanner.Scan()
+// 		if !scanned {
+// 			return
+// 		}
+
+// 		line := scanner.Text()
+// 		l := lexer.New(line)
+// 		p := parser.New(l)
+
+// 		program := p.ParseProgram()
+// 		if len(p.Errors()) != 0 {
+// 			printParserErrors(out, p.Errors())
+// 			continue
+// 		}
+
+// 		evaluated := evaluator.Eval(program, env)
+// 		if evaluated != nil {
+// 			io.WriteString(out, evaluated.Inspect())
+// 			io.WriteString(out, "\n")
+// 		}
+// 	}
+// }
+
 func Start(in io.Reader, out io.Writer) {
 	scanner := bufio.NewScanner(in)
-	env := object.NewEnvironment()
 
 	for {
 		fmt.Fprint(out, PROMPT)
@@ -47,11 +75,23 @@ func Start(in io.Reader, out io.Writer) {
 			continue
 		}
 
-		evaluated := evaluator.Eval(program, env)
-		if evaluated != nil {
-			io.WriteString(out, evaluated.Inspect())
-			io.WriteString(out, "\n")
+		comp := compiler.New()
+		err := comp.Compile(program)
+		if err != nil {
+			fmt.Fprintf(out, "Woops! Compilation failed:\n %s\n", err)
+			continue
 		}
+
+		machine := vm.New(comp.Bytecode())
+		err = machine.Run()
+		if err != nil {
+			fmt.Fprintf(out, "Woops! Executing bytecode filed:\n %s\n", err)
+			continue
+		}
+
+		stackTop := machine.StackTop()
+		io.WriteString(out, stackTop.Inspect())
+		io.WriteString(out, "\n")
 	}
 }
 
